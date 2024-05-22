@@ -433,7 +433,7 @@ impl<Pk: MiniscriptKey + ToPublicKey> Descriptor<Pk> {
             Descriptor::Bare(ref bare) => bare.get_satisfaction(satisfier),
             Descriptor::Pkh(ref pkh) => pkh.get_satisfaction(satisfier),
             Descriptor::Wpkh(ref wpkh) => wpkh.get_satisfaction(satisfier),
-            Descriptor::Wsh(ref wsh) => wsh.get_satisfaction(satisfier),
+            Descriptor::Wsh(ref wsh) => wsh.get_satisfaction(satisfier), // FIXME
             Descriptor::Sh(ref sh) => sh.get_satisfaction(satisfier),
             Descriptor::Tr(ref tr) => tr.get_satisfaction(satisfier),
         }

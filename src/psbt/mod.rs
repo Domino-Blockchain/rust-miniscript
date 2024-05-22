@@ -270,6 +270,7 @@ impl From<bitcoin::util::key::Error> for InputError {
 /// the same psbt structure
 /// All operations on this structure will panic if index
 /// is more than number of inputs in pbst
+#[derive(Clone)]
 pub struct PsbtInputSatisfier<'psbt> {
     /// pbst
     pub psbt: &'psbt Psbt,
@@ -325,10 +326,18 @@ impl<'psbt, Pk: MiniscriptKey + ToPublicKey> Satisfier<Pk> for PsbtInputSatisfie
     }
 
     fn lookup_ecdsa_sig(&self, pk: &Pk) -> Option<bitcoin::EcdsaSig> {
-        self.psbt.inputs[self.index]
-            .partial_sigs
-            .get(&pk.to_public_key())
-            .copied()
+        let compressed_pk = pk.to_public_key().inner.to_public_key();
+        for (known_pk, sig) in &self.psbt.inputs[self.index].partial_sigs {
+            let known_pk = known_pk.inner.to_public_key();
+            if compressed_pk == known_pk {
+                return Some(*sig);
+            }
+        }
+        None
+        // self.psbt.inputs[self.index]
+        //     .partial_sigs
+        //     .get(&pk.to_public_key())
+        //     .copied()
     }
 
     fn lookup_raw_pkh_ecdsa_sig(

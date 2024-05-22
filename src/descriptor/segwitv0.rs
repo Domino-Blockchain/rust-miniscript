@@ -146,7 +146,7 @@ impl<Pk: MiniscriptKey + ToPublicKey> Wsh<Pk> {
     where
         S: Satisfier<Pk>,
     {
-        let mut witness = match self.inner {
+        let mut witness = match &self.inner {
             WshInner::SortedMulti(ref smv) => smv.satisfy(satisfier)?,
             WshInner::Ms(ref ms) => ms.satisfy(satisfier)?,
         };
@@ -174,7 +174,7 @@ impl<Pk: MiniscriptKey + ToPublicKey> Wsh<Pk> {
 }
 
 /// Wsh Inner
-#[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub enum WshInner<Pk: MiniscriptKey> {
     /// Sorted Multi
     SortedMulti(SortedMultiVec<Pk, Segwitv0>),
